@@ -22,7 +22,8 @@ class CourseHomePage(CoursePage):
     HEADER_RESUME_COURSE_SELECTOR = '.page-header .action-resume-course'
 
     def is_browser_on_page(self):
-        return self.q(css='.course-outline').present
+        return self.q(css='.course-outline-visualprogress').present
+
 
     def __init__(self, browser, course_id):
         super(CourseHomePage, self).__init__(browser, course_id)
