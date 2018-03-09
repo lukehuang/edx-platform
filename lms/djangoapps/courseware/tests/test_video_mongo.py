@@ -41,7 +41,7 @@ from xmodule.tests.test_import import DummySystem
 from xmodule.tests.test_video import VideoDescriptorTestBase, instantiate_descriptor
 from xmodule.video_module import VideoDescriptor, bumper_utils, rewrite_video_url, video_utils
 from xmodule.video_module.transcripts_utils import Transcript, save_to_store
-from xmodule.video_module.video_module import EXPORT_STATIC_DIR
+from xmodule.video_module.video_module import EXPORT_IMPORT_STATIC_DIR
 from xmodule.x_module import STUDENT_VIEW
 
 from .helpers import BaseTestXmodule
@@ -1575,7 +1575,7 @@ class VideoDescriptorTest(TestCase, VideoDescriptorTestBase):
         """
         language_code = 'ar'
         transcript_file_name = 'test_edx_video_id-ar.srt'
-        expected_transcript_path = combine(self.temp_dir, combine(EXPORT_STATIC_DIR, transcript_file_name))
+        expected_transcript_path = combine(self.temp_dir, combine(EXPORT_IMPORT_STATIC_DIR, transcript_file_name))
         self.descriptor.edx_video_id = 'test_edx_video_id'
 
         create_profile('mobile')
@@ -1620,7 +1620,7 @@ class VideoDescriptorTest(TestCase, VideoDescriptorTestBase):
         self.assertXmlEqual(expected, actual)
 
         # Verify transcript file is created.
-        self.assertEqual([transcript_file_name], self.file_system.listdir(EXPORT_STATIC_DIR))
+        self.assertEqual([transcript_file_name], self.file_system.listdir(EXPORT_IMPORT_STATIC_DIR))
 
         # Also verify the content of created transcript file.
         expected_transcript_content = File(open(expected_transcript_path)).read()

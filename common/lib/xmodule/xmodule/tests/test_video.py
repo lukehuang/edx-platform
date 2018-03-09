@@ -34,7 +34,7 @@ from xblock.fields import ScopeIds
 
 from xmodule.tests import get_test_descriptor_system
 from xmodule.validation import StudioValidationMessage
-from xmodule.video_module import VideoDescriptor, create_youtube_string, EXPORT_STATIC_DIR
+from xmodule.video_module import VideoDescriptor, create_youtube_string, EXPORT_IMPORT_STATIC_DIR
 from xmodule.video_module.transcripts_utils import download_youtube_subs, save_to_store
 from . import LogicTest
 from .test_import import DummySystem
@@ -721,7 +721,7 @@ class VideoExportTestCase(VideoDescriptorTestBase):
         self.assertXmlEqual(expected, xml)
         mock_val_api.export_to_xml.assert_called_once_with(
             video_id=edx_video_id,
-            static_dir=EXPORT_STATIC_DIR,
+            static_dir=EXPORT_IMPORT_STATIC_DIR,
             resource_fs=self.file_system,
             course_id=unicode(self.descriptor.runtime.course_id.for_branch(None)),
         )

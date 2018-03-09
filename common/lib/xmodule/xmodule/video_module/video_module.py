@@ -99,7 +99,7 @@ log = logging.getLogger(__name__)
 _ = lambda text: text
 
 
-EXPORT_STATIC_DIR = u'static'
+EXPORT_IMPORT_STATIC_DIR = u'static'
 
 
 @XBlock.wants('settings', 'completion')
@@ -724,13 +724,13 @@ class VideoDescriptor(VideoFields, VideoTranscriptsMixin, VideoStudioViewHandler
         if edx_video_id:
             try:
                 # Create static dir if not created earlier.
-                resource_fs.makedirs(EXPORT_STATIC_DIR, recreate=True)
+                resource_fs.makedirs(EXPORT_IMPORT_STATIC_DIR, recreate=True)
 
                 xml.append(
                     edxval_api.export_to_xml(
                         video_id=edx_video_id,
                         resource_fs=resource_fs,
-                        static_dir=EXPORT_STATIC_DIR,
+                        static_dir=EXPORT_IMPORT_STATIC_DIR,
                         course_id=unicode(self.runtime.course_id.for_branch(None))
                     )
                 )
@@ -959,6 +959,7 @@ class VideoDescriptor(VideoFields, VideoTranscriptsMixin, VideoStudioViewHandler
                 video_asset_elem,
                 edx_video_id,
                 resource_fs,
+                EXPORT_IMPORT_STATIC_DIR,
                 course_id=course_id
             )
 
