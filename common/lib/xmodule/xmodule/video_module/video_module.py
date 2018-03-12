@@ -953,6 +953,11 @@ class VideoDescriptor(VideoFields, VideoTranscriptsMixin, VideoStudioViewHandler
             edx_video_id = self.edx_video_id.strip()
 
         video_asset_elem = xml.find('video_asset')
+        external_transcripts = {}
+
+        sub = 'sub_XYcbb.srt'
+        # sub = 'es_sub_XYcbb.srt'
+        external_transcripts = {'en': ['subs_sd.srt', 'asd']}
 
         if edxval_api and video_asset_elem is not None:
             edxval_api.import_from_xml(
@@ -960,6 +965,7 @@ class VideoDescriptor(VideoFields, VideoTranscriptsMixin, VideoStudioViewHandler
                 edx_video_id,
                 resource_fs,
                 EXPORT_IMPORT_STATIC_DIR,
+                external_transcripts,
                 course_id=course_id
             )
 
