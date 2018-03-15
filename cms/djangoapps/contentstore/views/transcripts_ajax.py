@@ -87,7 +87,6 @@ def validate_transcript_upload_data(request):
     """
     error, validated_data = None, {}
     data, files = request.POST, request.FILES
-    from pdb import set_trace; set_trace()
     if not data.get('locator'):
         error = _(u'Video locator is required.')
     elif 'transcript-file' not in files:
@@ -154,7 +153,7 @@ def upload_transcripts(request):
                 },
                 file_data=ContentFile(sjson_subs),
             )
-            response = JsonResponse({'edx_video_id': edx_video_id}, status=200)
+            response = JsonResponse({'edx_video_id': edx_video_id, 'status': 'Success'}, status=200)
 
         except (TranscriptsGenerationException, UnicodeDecodeError):
 
