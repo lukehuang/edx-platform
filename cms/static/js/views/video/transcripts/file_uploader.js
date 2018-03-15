@@ -29,8 +29,7 @@ function($, Backbone, _, Utils) {
 
         render: function() {
             var tpl = $(this.uploadTpl).text(),
-                tplContainer = this.$el.find('.transcripts-file-uploader'),
-                videoList = this.options.videoListObject.getVideoObjectsList();
+                tplContainer = this.$el.find('.transcripts-file-uploader');
 
             if (tplContainer.length) {
                 if (!tpl) {
@@ -42,8 +41,7 @@ function($, Backbone, _, Utils) {
 
                 tplContainer.html(this.template({
                     ext: this.validFileExtensions,
-                    component_locator: this.options.component_locator,
-                    video_list: videoList
+                    component_locator: this.options.component_locator
                 }));
 
                 this.$form = this.$el.find('.file-chooser');
