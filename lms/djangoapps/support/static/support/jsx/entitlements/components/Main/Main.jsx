@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import { StatusAlert } from '@edx/paragon';
+import { Button, StatusAlert } from '@edx/paragon';
 import SearchContainer from '../Search/SearchContainer.jsx';
 import EntitlementSupportTableContainer from '../Table/EntitlementSupportTableContainer.jsx';
 
@@ -17,6 +17,11 @@ const Main = props => (
       Entitlement Support Page
     </h2>
     <SearchContainer />
+    <Button
+      className={['btn', 'btn-primary']}
+      label= "Create New Entitlement"
+      onClick={this.openCreationModal.bind(this)}
+    />
     <EntitlementSupportTableContainer ecommerceUrl={props.ecommerceUrl} />
   </div>
 );

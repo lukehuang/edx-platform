@@ -5,10 +5,10 @@ class EntitlementModal extends React.Component{
   constructor(props){
     super(props);
     this.state = {
+      isReissue: false,
       courseUuid: '',
-      user: '',
+      username: '',
       mode: '',
-      reason: '',
       comments: '',
     }
   }
@@ -17,46 +17,44 @@ class EntitlementModal extends React.Component{
   // Component Lifecycle function
   // updates state to reflect incoming props 
   // This prepopulates the re-issue modal with the correct values.
-    if (nextProps !== this.props){ 
+    const isReissue = nextProps.entitlement != null && nextProps.entitlement != undefined;
+    if(isReissue){
+      const {courseUuid, mode, user} = nextProps.entitlement;
       this.setState({
-        courseUuid: nextProps.courseUuid,
-        user: nextProps.user,
-        mode: nextProps.mode,
-        reason: this.props.supportReasons[0].value, //Set reason to the default (first) reason in the list
+        courseUuid,
+        mode,
+        isReissue,
+        username: user,
         comments: '',
-      })
+      });
     }
   }
 
-  handleCourseUUIDChange(event){
-    this.setState({courseUuid: event});
+  handleCourseUUIDChange(courseUuid){
+    this.setState({ courseUuid });
   }
 
-  handleUserChange(event){
-    this.setState({user: event});
+  handleUsernameChange(username){
+    this.setState({ username });
   }
 
-  handleModeChange(event){
-    this.setState({mode: event});
+  handleModeChange(mode){
+    this.setState({ mode });
   }
 
-  handleReasonChange(event){
-    this.setState({reason: event});
-  }
-
-  handleCommentsChange(event){
-    this.setState({comments: event});
+  handleCommentsChange(comments){
+    this.setState({ comments });
   }
 
   submitForm(){
-    if(this.props.isReissue) {//if there is an active entitlement we are updating an entitlement
-      const { user, reason, comments } = this.state;
-      const entitlementUuid = this.props.entitlementUuid
-      this.props.updateEntitlement(user, reason, entitlementUuid, comments);
+    if(this.state.isReissue) {//if there is an active entitlement we are updating an entitlement
+      const { comments } = this.state;
+      const { entitlement } = this.props;
+      this.props.reissueEntitlement({entitlement, comments});
     }
     else { // if there is no active entitlement we are creating a new entitlement
       const {courseUuid, user, mode, reason, comments} = this.state;
-      this.props.createEntitlement(courseUuid, user, mode, reason, comments);
+      this.props.createEntitlement({courseUuid, user, mode, reason, comments});
     }
   }
 
@@ -65,7 +63,7 @@ class EntitlementModal extends React.Component{
   }
 
   render(){
-    const isReissue = this.props.isReissue
+    const isReissue = this.props.entitlement != null && this.props.entitlement != undefined;
     const title = isReissue ? "Re-issue Entitlement" : "Create Entitlement"
 
     //Prepare body of the modal, if the Paragon Modal took children this could be 
@@ -83,10 +81,10 @@ class EntitlementModal extends React.Component{
         />
         <InputText 
           disabled={ isReissue }
-          name="user"
-          label="User" 
-          value={this.state.user} 
-          onChange={this.handleUserChange.bind(this)}
+          name="username"
+          label="Username" 
+          value={this.state.username} 
+          onChange={this.handleUsernameChange.bind(this)}
         />
         <InputSelect
           disabled={ isReissue }
@@ -99,14 +97,6 @@ class EntitlementModal extends React.Component{
             { label: 'Professional', value: 'professional' }
           ]}
           onChange={this.handleModeChange.bind(this)}
-        />
-        <InputSelect
-          disabled={ isReissue }
-          name="reason"
-          label="Reason"
-          value={this.state.reason}
-          options={this.props.supportReasons}
-          onChange={this.handleReasonChange.bind(this)}
         />
         <TextArea
           name="comments"

@@ -1,27 +1,27 @@
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 
-import * as actionCreators from '../../data/actions/actionCreators';
+import { createEntitlement, reissueEntitlement } from '../../data/actions/error';
+import { closeModal } from '../../data/actions/modal';
+
 import EntitlementModal from './EntitlementModal';
 
 const mapStateToProps = (state) => {
-  //Maps pieces of the state to props for convenience
-  const entitlement = state.modal.activeEntitlement
-  const isReissue = entitlement !== null && entitlement !== undefined;
   return {
-    isReissue: isReissue,
-    isOpen: state.modal.isOpen,
-    entitlementUuid: isReissue ? entitlement.uuid : '',
-    courseUuid: isReissue ? entitlement.course_uuid : '',
-    user: isReissue ? entitlement.user : '',
-    mode: isReissue ? entitlement.mode : '',
-  };
+    isOpen: state.modal.isOpen
+    entitlement: state.modal.activeEntitlement,
+  }
 }
 
-const mapDispatchToProps = (dispatch) => {
-  // bindActionCreators should be replaced by explicit dispatching.
-  return bindActionCreators(actionCreators, dispatch);
-}
+const mapDispatchToProps = dispatch => ({
+  createEntitlement: ({username, courseUuid, mode, comments}) => dispatch(
+    createEntitlement({username, courseUuid, mode, comments})
+  ),
+  reissueEntitlements: ({entitlement, comments}) => dispatch(
+    fetchEntitlements({entitlement, comments})
+  ),
+  closeModal: () => dispatch(closeModal()),
+});
 
 const EntitlementModalContainer = connect(
   mapStateToProps,
