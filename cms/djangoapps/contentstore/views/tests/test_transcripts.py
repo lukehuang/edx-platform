@@ -183,7 +183,7 @@ class TestUploadTranscripts(BaseTranscripts):
 
         return response
 
-    def assert_transcript_upload_response(self, response, expected_status_code,  expected_message):
+    def assert_transcript_upload_response(self, response, expected_status_code, expected_message):
         response_content = json.loads(response.content)
         self.assertEqual(response.status_code, expected_status_code)
         self.assertEqual(response_content['status'], expected_message)
