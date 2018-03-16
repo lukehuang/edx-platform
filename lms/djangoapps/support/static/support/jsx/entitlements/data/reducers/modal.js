@@ -1,11 +1,11 @@
 import { modalActions, entitlementActions } from '../actions/constants';
 
-const error = (state = {}, action) => {
+const modal = (state = {}, action) => {
   switch (action.type) {
     case modalActions.OPEN_REISSUE_MODAL:
-      return { ...state, {isOpen: true, activeEntitlement: action.entitlement}};
+      return { ...state, isOpen: true, activeEntitlement: action.entitlement};
     case modalActions.OPEN_CREATION_MODAL:
-      return {...state, {isOpen: true, activeEntitlement: null}};
+      return {...state, isOpen: true, activeEntitlement: null};
     case modalActions.CLOSE_MODAL:
     case entitlementActions.UPDATE_ENTITLEMENT_SUCCESS:
     case entitlementActions.CREATE_ENTITLEMENT_SUCCESS:
