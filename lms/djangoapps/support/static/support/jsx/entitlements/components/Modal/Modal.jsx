@@ -9,8 +9,14 @@ class EntitlementModal extends React.Component{
       courseUuid: '',
       username: '',
       mode: '',
-      comments: '',
+      comments: "Add any additional comments here",
     }
+    this.handleCourseUUIDChange = this.handleCourseUUIDChange.bind(this);
+    this.handleUsernameChange = this.handleUsernameChange.bind(this);
+    this.handleModeChange = this.handleModeChange.bind(this);
+    this.handleCommentsChange = this.handleCommentsChange.bind(this);
+    this.submitForm = this.submitForm.bind(this);
+    this.onClose = this.onClose.bind(this);
   }
 
   componentWillReceiveProps(nextProps){
@@ -25,7 +31,7 @@ class EntitlementModal extends React.Component{
         mode,
         isReissue,
         username: user,
-        comments: '',
+        comments: 'Add any additional comments here',
       });
     }
   }
@@ -63,7 +69,7 @@ class EntitlementModal extends React.Component{
   }
 
   render(){
-    const isReissue = this.props.entitlement != null && this.props.entitlement != undefined;
+    const { isReissue, courseUuid , username, mode, comments} = this.state
     const title = isReissue ? "Re-issue Entitlement" : "Create Entitlement"
 
     //Prepare body of the modal, if the Paragon Modal took children this could be 
@@ -77,14 +83,14 @@ class EntitlementModal extends React.Component{
           name="courseUuid"
           label="Course UUID" 
           value={this.state.courseUuid} 
-          onChange={this.handleCourseUUIDChange.bind(this)}
+          onChange={this.handleCourseUUIDChange}
         />
         <InputText 
           disabled={ isReissue }
           name="username"
           label="Username" 
           value={this.state.username} 
-          onChange={this.handleUsernameChange.bind(this)}
+          onChange={this.handleUsernameChange}
         />
         <InputSelect
           disabled={ isReissue }
@@ -96,13 +102,13 @@ class EntitlementModal extends React.Component{
             { label: 'Verified', value: 'verified' },
             { label: 'Professional', value: 'professional' }
           ]}
-          onChange={this.handleModeChange.bind(this)}
+          onChange={this.handleModeChange}
         />
         <TextArea
           name="comments"
           label="Comments"
-          value="Add any additional comments here"
-          onChange={this.handleCommentsChange.bind(this)}
+          value={comments}
+          onChange={this.handleCommentsChange}
         />
       </div>
     )
@@ -118,10 +124,10 @@ class EntitlementModal extends React.Component{
             <Button
               label="Submit"
               buttonType="primary"
-              onClick={this.submitForm.bind(this)}
+              onClick={this.submitForm}
             />,
           ]}
-          onClose={this.onClose.bind(this)}
+          onClose={this.onClose}
         />
       </div>
     )

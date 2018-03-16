@@ -20,7 +20,7 @@ const Main = props => (
     <Button
       className={['btn', 'btn-primary']}
       label= "Create New Entitlement"
-      onClick={this.openCreationModal.bind(this)}
+      onClick={this.openCreationModal}
     />
     <EntitlementSupportTableContainer ecommerceUrl={props.ecommerceUrl} />
   </div>

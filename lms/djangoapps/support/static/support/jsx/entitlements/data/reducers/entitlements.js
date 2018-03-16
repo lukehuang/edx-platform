@@ -6,7 +6,7 @@ const entitlements = (state = [], action) => {
       return action.entitlements;
     case entitlementActions.create.SUCCESS:
       return [...state, action.entitlement];
-    case entitlementActions.update.SUCCESS:
+    case entitlementActions.reissue.SUCCESS:
       return state.map((entitlement) => {
         if(entitlement.uuid === action.entitlement.uuid) {
           return action.entitlement;
