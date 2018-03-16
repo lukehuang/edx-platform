@@ -628,7 +628,7 @@ class VideoDescriptorImportTestCase(unittest.TestCase):
 
     @patch('xmodule.video_module.video_module.edxval_api')
     def test_import_val_data(self, mock_val_api):
-        def mock_val_import(xml, edx_video_id, course_id):
+        def mock_val_import(xml, edx_video_id, resource_fs, static_dir, external_transcripts, course_id):
             """Mock edxval.api.import_from_xml"""
             self.assertEqual(xml.tag, 'video_asset')
             self.assertEqual(dict(xml.items()), {'mock_attr': ''})
@@ -637,6 +637,9 @@ class VideoDescriptorImportTestCase(unittest.TestCase):
 
         mock_val_api.import_from_xml = Mock(wraps=mock_val_import)
         module_system = DummySystem(load_error_modules=True)
+
+        # Create static directory in import file system and place transcript files inside it.
+        module_system.resources_fs.makedirs(EXPORT_IMPORT_STATIC_DIR, recreate=True)
 
         # import new edx_video_id
         xml_data = """
@@ -652,6 +655,9 @@ class VideoDescriptorImportTestCase(unittest.TestCase):
         mock_val_api.import_from_xml.assert_called_once_with(
             ANY,
             'test_edx_video_id',
+            module_system.resources_fs,
+            EXPORT_IMPORT_STATIC_DIR,
+            {},
             course_id='test_course_id'
         )
 

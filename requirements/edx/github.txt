@@ -101,7 +101,7 @@ git+https://github.com/edx/xblock-utils.git@v1.0.5#egg=xblock-utils==1.0.5
 -e git+https://github.com/edx-solutions/xblock-google-drive.git@138e6fa0bf3a2013e904a085b9fed77dab7f3f21#egg=xblock-google-drive
 git+https://github.com/edx/xblock-lti-consumer.git@v1.1.7#egg=lti_consumer-xblock==1.1.7
 
--e git+https://github.com/edx/edx-val.git@9bd7cc9424b374b3d88ad30f07de833b2c72b172#egg=edxval
+-e git+https://github.com/edx/edx-val.git@1953b85636136c4d2f6cb0fb984e2f9b56603dd8#egg=edxval
 
 # Third Party XBlocks
 

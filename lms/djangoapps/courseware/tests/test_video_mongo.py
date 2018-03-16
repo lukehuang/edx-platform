@@ -27,6 +27,7 @@ from edxval.api import (
     get_video_transcript,
     get_video_transcript_data
 )
+from edxval.utils import create_file_to_fs
 from lxml import etree
 from mock import MagicMock, Mock, patch
 from nose.plugins.attrib import attr
@@ -40,7 +41,7 @@ from xmodule.modulestore.tests.django_utils import TEST_DATA_MONGO_MODULESTORE, 
 from xmodule.tests.test_import import DummySystem
 from xmodule.tests.test_video import VideoDescriptorTestBase, instantiate_descriptor
 from xmodule.video_module import VideoDescriptor, bumper_utils, rewrite_video_url, video_utils
-from xmodule.video_module.transcripts_utils import Transcript, save_to_store
+from xmodule.video_module.transcripts_utils import Transcript, save_to_store, subs_filename
 from xmodule.video_module.video_module import EXPORT_IMPORT_STATIC_DIR
 from xmodule.x_module import STUDENT_VIEW
 
@@ -60,7 +61,6 @@ I am overwatch.
 
 2
 00:00:16,500 --> 00:00:18,600
-可以用“我不太懂艺术 但我知道我喜欢什么”做比喻.
 """
 
 
@@ -1537,7 +1537,7 @@ class VideoDescriptorTest(TestCase, VideoDescriptorTestBase):
         return dict(
             video_id=video_id,
             language_code='ar',
-            url='{media_url}ext101.srt'.format(media_url=settings.MEDIA_URL),   # MEDIA_URL is /static/uploads/
+            # url='{media_url}ext101.srt'.format(media_url=settings.MEDIA_URL),   # MEDIA_URL is /static/uploads/
             provider='Cielo24',
             file_format='srt',
         )
@@ -1591,7 +1591,7 @@ class VideoDescriptorTest(TestCase, VideoDescriptorTestBase):
                 'bitrate': 333,
             }],
         })
-        transcript_url = create_or_update_video_transcript(
+        create_or_update_video_transcript(
             video_id=self.descriptor.edx_video_id,
             language_code=language_code,
             metadata={
@@ -1607,12 +1607,11 @@ class VideoDescriptorTest(TestCase, VideoDescriptorTestBase):
                 <video_asset client_video_id="test_client_video_id" duration="111.0" image="">
                     <encoded_video profile="mobile" url="http://example.com/video" file_size="222" bitrate="333"/>
                     <transcripts>
-                        <transcript file_format="srt" file_name='video-transcripts/{transcript_name}' language_code="{language_code}" provider="Cielo24"/>
+                        <transcript file_format="srt" language_code="{language_code}" provider="Cielo24"/>
                     </transcripts>
                 </video_asset>
             </video>
         """.format(
-            transcript_name=transcript_url.split('/')[-1],
             language_code=language_code
         )
         parser = etree.XMLParser(remove_blank_text=True)
@@ -1656,8 +1655,35 @@ class VideoDescriptorTest(TestCase, VideoDescriptorTestBase):
         create_profile('mobile')
         module_system = DummySystem(load_error_modules=True)
 
+        # Create static directory in import file system and place transcript files inside it.
+        module_system.resources_fs.makedirs(EXPORT_IMPORT_STATIC_DIR, recreate=True)
+
+        # Create S3 transcripts
+        create_file_to_fs(
+            TRANSCRIPT_FILE_DATA,
+            'test_edx_video_id-ar.srt',
+            module_system.resources_fs,
+            EXPORT_IMPORT_STATIC_DIR
+        )
+
+        # Create self.sub and self.transcripts transcript.
+        sub_id = '0CzPOIIdUsA'
+        create_file_to_fs(
+            TRANSCRIPT_FILE_DATA,
+            subs_filename(sub_id, self.descriptor.transcript_language),
+            module_system.resources_fs,
+            EXPORT_IMPORT_STATIC_DIR
+        )
+        create_file_to_fs(
+            TRANSCRIPT_FILE_DATA,
+            'The_Flash.srt',
+            module_system.resources_fs,
+            EXPORT_IMPORT_STATIC_DIR
+        )
+
+        # sub="0CzPOIIdUsA" transcripts="{&quot;en&quot;: &quot;The_Flash.srt&quot;}"
         xml_data = """
-            <video edx_video_id="test_edx_video_id">
+            <video edx_video_id="test_edx_video_id" sub="0CzPOIIdUsA" transcripts="{&quot;en&quot;: &quot;The_Flash.srt&quot;}">
                 <video_asset client_video_id="test_client_video_id" duration="111.0">
                     <encoded_video profile="mobile" url="http://example.com/video" file_size="222" bitrate="333"/>
                     <transcripts>
@@ -1680,9 +1706,9 @@ class VideoDescriptorTest(TestCase, VideoDescriptorTestBase):
         self.assertEqual(video_data['encoded_videos'][0]['file_size'], 222)
         self.assertEqual(video_data['encoded_videos'][0]['bitrate'], 333)
         # verify transcript data
-        self.assertDictEqual(
-            get_video_transcript(video.edx_video_id, 'ar'),
-            self.get_video_transcript_data('test_edx_video_id')
+        self.assertDictContainsSubset(
+            self.get_video_transcript_data('test_edx_video_id'),
+            get_video_transcript(video.edx_video_id, 'ar')
         )
 
     def test_import_val_data_invalid(self):

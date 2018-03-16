@@ -48,6 +48,7 @@ from .transcripts_utils import (
     Transcript,
     VideoTranscriptsMixin,
     clean_video_id,
+    subs_filename,
 )
 from .transcripts_model_utils import (
     is_val_transcript_feature_enabled_for_course
@@ -955,9 +956,17 @@ class VideoDescriptor(VideoFields, VideoTranscriptsMixin, VideoStudioViewHandler
         video_asset_elem = xml.find('video_asset')
         external_transcripts = {}
 
-        sub = 'sub_XYcbb.srt'
-        # sub = 'es_sub_XYcbb.srt'
-        external_transcripts = {'en': ['subs_sd.srt', 'asd']}
+        # Add trancripts from self.sub field.
+        if self.sub:
+            external_transcripts[self.transcript_language] = [subs_filename(self.sub, self.transcript_language)]
+
+        if self.transcripts:
+            for language_code, transcript in self.transcripts.items():
+                # If sub transcript is present then send both transcripts.
+                if language_code in external_transcripts:
+                    external_transcripts[language_code].append(transcript)
+                else:
+                    external_transcripts[language_code] = [transcript]
 
         if edxval_api and video_asset_elem is not None:
             edxval_api.import_from_xml(
