@@ -1,14 +1,13 @@
 """Tests for items views."""
 
 import copy
+from codecs import BOM_UTF8
 import ddt
 import json
-import os
+from mock import patch, Mock
 import tempfile
 import textwrap
 from uuid import uuid4
-from codecs import BOM_UTF8
-from mock import patch, Mock
 
 from django.conf import settings
 from django.core.urlresolvers import reverse
