@@ -224,7 +224,7 @@ def check_transcripts(request):
     transcripts_presence['status'] = 'Success'
 
     try:
-        get_transcript_from_val(edx_video_id=item.edx_video_id, language_code=u'en')
+        get_transcript_from_val(edx_video_id=item.edx_video_id, lang=u'en')
         command, subs_to_use = 'found', ''
     except NotFoundError:
         filename = 'subs_{0}.srt.sjson'.format(item.sub)
